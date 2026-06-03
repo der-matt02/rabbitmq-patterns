@@ -1,3 +1,16 @@
 spring:
   application:
     name: rabbitmqpatterns
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+
+server:
+  port: 8080
+
+logging:
+  level:
+    com.dermatt.rabbitmqpatterns: INFO
+    org.apache.camel: INFO
