@@ -12,11 +12,7 @@ import java.util.UUID;
 @Component
 public class OrdersRoute extends RouteBuilder {
 
-    private final ObjectMapper mapper;
-
-    public OrdersRoute(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void configure() {
@@ -42,7 +38,7 @@ public class OrdersRoute extends RouteBuilder {
                 OrderCreatedEvent event = new OrderCreatedEvent(evtId, req.getOrderId(), req.getCustomerId(), req.getTotal());
                 exchange.getIn().setBody(mapper.writeValueAsString(event));
             })
-            .to("spring-rabbitmq:orders.exchange")
+            .to("spring-rabbitmq:orders.exchange?exchangeType=fanout")
             .log("[orders-route] PedidoCreado publicado en orders.exchange");
     }
 }

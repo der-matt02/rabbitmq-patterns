@@ -10,7 +10,7 @@ public class AnalyticsRoute extends RouteBuilder {
     @Override
     public void configure() {
 
-        from("spring-rabbitmq:orders.exchange?queues=analytics.queue")
+        from("spring-rabbitmq:orders.exchange?queues=analytics.queue&exchangeType=fanout")
             .routeId("analytics-consumer-route")
             .log("[analytics-service] Evento registrado para analitica: ${body}");
     }

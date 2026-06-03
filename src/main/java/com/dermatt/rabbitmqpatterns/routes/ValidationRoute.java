@@ -9,11 +9,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class ValidationRoute extends RouteBuilder {
 
-    private final ObjectMapper mapper;
-
-    public ValidationRoute(ObjectMapper mapper) {
-        this.mapper = mapper;
-    }
+    private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
     public void configure() {

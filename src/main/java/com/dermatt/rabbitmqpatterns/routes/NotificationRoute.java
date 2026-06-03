@@ -10,7 +10,7 @@ public class NotificationRoute extends RouteBuilder {
     @Override
     public void configure() {
 
-        from("spring-rabbitmq:orders.exchange?queues=notification.queue")
+        from("spring-rabbitmq:orders.exchange?queues=notification.queue&exchangeType=fanout")
             .routeId("notification-consumer-route")
             .log("[notification-service] Notificacion enviada al cliente: ${body}");
     }
