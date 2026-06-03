@@ -1,0 +1,47 @@
+flowchart TD
+    A["🖥️ Cliente\nPOST /orders\n{orderId, customerId, total}"]
+
+    subgraph API["orders-api"]
+        B["ValidationRoute\ndirect:validate"]
+    end
+
+    subgraph ERROR["Invalid Message Channel"]
+        C["invalid.exchange\n(direct)"]
+        D[("invalid-message.queue")]
+        E["error-handler\nlog mensaje inválido"]
+    end
+
+    subgraph P2P["Point-to-Point Channel — Parte A"]
+        F["billing-dispatch-route\nCommand Message: GenerarFactura"]
+        G["billing.exchange\n(direct)"]
+        H[("billing.queue")]
+        I["billing-service\nlog: factura generada"]
+    end
+
+    subgraph PUBSUB["Publish/Subscribe Channel — Parte B"]
+        J["event-dispatch-route\nEvent Message: PedidoCreado"]
+        K["orders.exchange\n(fanout)"]
+        L[("notification.queue")]
+        M[("analytics.queue")]
+        N["notification-service\nlog: notificación enviada"]
+        O["analytics-service\nlog: evento registrado"]
+    end
+
+    A --> B
+
+    B -->|"❌ orderId / customerId nulo\ntotal <= 0 / JSON inválido"| C
+    C --> D --> E
+
+    B -->|"✅ Pedido válido\nmulticast paralelo"| F
+    B -->|"✅ Pedido válido\nmulticast paralelo"| J
+
+    F --> G --> H --> I
+
+    J --> K
+    K --> L --> N
+    K --> M --> O
+
+    style ERROR fill:#fff0f0,stroke:#ff4444
+    style P2P fill:#f0f8ff,stroke:#4488ff
+    style PUBSUB fill:#f0fff0,stroke:#44bb44
+    style API fill:#fffdf0,stroke:#ccaa00
