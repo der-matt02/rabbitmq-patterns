@@ -2,7 +2,8 @@
 @host = http://localhost:8080
 
 ### ==========================================
-### Caso 1: Facturación válida (Point-to-Point)
+### Caso 1 y Caso 2: Petición válida
+### (El sistema automáticamente despacha a Facturación y publica el Evento)
 ### ==========================================
 POST {{host}}/orders
 Content-Type: application/json
@@ -13,24 +14,6 @@ Content-Type: application/json
   "orderId": "ORD-1001",
   "customerId": "CLI-2001",
   "total": 59.90
-}
-
-### ==========================================
-### Caso 2: Evento PedidoCreado válido (Publish/Subscribe)
-### ==========================================
-POST {{host}}/orders
-Content-Type: application/json
-
-{
-  "eventId": "evt-001",
-  "eventType": "PedidoCreado",
-  "occurredAt": "2026-05-26T10:30:00Z",
-  "source": "orders-api",
-  "payload": {
-    "orderId": "ORD-1001",
-    "customerId": "CLI-2001",
-    "total": 59.90
-  }
 }
 
 ### ==========================================
