@@ -1,0 +1,114 @@
+### Variables
+@host = http://localhost:8080
+
+### ==========================================
+### Caso 1: Facturación válida (Point-to-Point)
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-001",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1001",
+  "customerId": "CLI-2001",
+  "total": 59.90
+}
+
+### ==========================================
+### Caso 2: Evento PedidoCreado válido (Publish/Subscribe)
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "eventId": "evt-001",
+  "eventType": "PedidoCreado",
+  "occurredAt": "2026-05-26T10:30:00Z",
+  "source": "orders-api",
+  "payload": {
+    "orderId": "ORD-1001",
+    "customerId": "CLI-2001",
+    "total": 59.90
+  }
+}
+
+### ==========================================
+### Caso 3: Mensaje sin orderId (Validación fallida)
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-003",
+  "messageType": "GenerarFactura",
+  "customerId": "CLI-2001",
+  "total": 59.90
+}
+
+### ==========================================
+### Caso 4: Total inválido (Validación fallida - igual a 0 o negativo)
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-004",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1004",
+  "customerId": "CLI-2001",
+  "total": -5.50
+}
+
+### ==========================================
+### Caso Extra: JSON mal formado
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-005",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1005",
+  "customerId": "CLI-2001",
+  "total": 59.90,
+  --- error de sintaxis aqui ---
+}
+
+### ==========================================
+### Caso 5: Competencia de consumidores (Ejecutar varias veces rápido)
+### ==========================================
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-comp-1",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1010",
+  "customerId": "CLI-2010",
+  "total": 100.00
+}
+
+###
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-comp-2",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1011",
+  "customerId": "CLI-2010",
+  "total": 200.00
+}
+
+###
+POST {{host}}/orders
+Content-Type: application/json
+
+{
+  "messageId": "msg-comp-3",
+  "messageType": "GenerarFactura",
+  "orderId": "ORD-1012",
+  "customerId": "CLI-2010",
+  "total": 300.00
+}
